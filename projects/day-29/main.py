@@ -55,19 +55,38 @@ def save():
     is_ok = messagebox.askokcancel(title=website, message=f"these are the details entered : \n email: {email} \n password: {password} \n is it ok to save?")
 
     if is_ok:
-        with open("password.json", "r") as file:
-            data = json.load(file)
+        try:
+            with open("password.json", "r") as file:
+                data = json.load(file)
+        except FileNotFoundError:
+            with open("password.json", "w") as file:
+                json.dump(new_data, file, indent=4)
+        else:
             data.update(new_data)
 
-        with open("password.json", "w") as file:
-            json.dump(data, file, indent=4)
-
+            with open("password.json", "w") as file:
+                json.dump(data, file, indent=4)
+        finally:
             website_entry.delete(0, END)
             email_entry.delete(0, END)
             password_entry.delete(0, END)
 
+#-----------------FIND PASSWORD -----------------------------------------#
 
-
+def search():
+    website = website_entry.get()
+    try:
+        with open("password.json", "r") as file:
+            data = json.load(file)
+    except FileNotFoundError:
+        messagebox.showerror("Error", "data not found")
+    else:
+        if website in data:
+            email = data[website]["email"]
+            password = data[website]["password"]
+            messagebox.showinfo(title=website, message=f"email = {email} \n password = {password}")
+        else:
+            messagebox.showerror("Error", f"no details related to {website} found   ")
 
 
 
@@ -84,22 +103,27 @@ canvas.grid(row=0,column=1)
 website_lable = Label(text="Website")
 website_lable.grid(row=1,column=0)
 
-website_entry = Entry(width=35)
-website_entry.grid(row=1,column=1, columnspan=2)
+website_entry = Entry(width=20)
+website_entry.grid(row=1,column=1)
 website_entry.focus()
+
+
+wesite_search = Button (text="Search", command=search , width=20)
+wesite_search.grid(row=1,column=2)
 
 email_lable = Label(text="Email/mail id")
 email_lable.grid(row=2,column=0)
 
-email_entry = Entry(width=35)
+email_entry = Entry(width=45)
 email_entry.grid(row=2,column=1, columnspan=2)
+
 password_lable = Label(window, text="Password")
 password_lable.grid(row=3,column=0)
 
 password_entry = Entry(width=21)
 password_entry.grid(row=3,column=1)
 
-generate_button = Button( text="Generate Password", command=generate_password)
+generate_button = Button( text="Generate Password", command=generate_password, width=20)
 generate_button.grid(row=3,column=2)
 
 add_button = Button(text="Add", width=36 , command=save)
