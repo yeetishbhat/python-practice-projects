@@ -2,6 +2,8 @@ from random import random
 from tkinter import *
 from tkinter import messagebox
 import random
+import json
+
 #---------------------------- PASSWORD GENERATOR ------------------------------- #
 def generate_password():
     letters = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z', 'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z']
@@ -40,6 +42,12 @@ def save():
     website = website_entry.get()
     email = email_entry.get()
     password = password_entry.get()
+    new_data = {
+        website:{
+            "email":email,
+            "password":password
+        }
+    }
 
     if len(website) == 0 or len(email) == 0 or len(password) == 0:
         messagebox.showerror("Error", "Please enter all fields")
@@ -47,8 +55,8 @@ def save():
     is_ok = messagebox.askokcancel(title=website, message=f"these are the details entered : \n email: {email} \n password: {password} \n is it ok to save?")
 
     if is_ok:
-        with open("password.txt" , "a") as file:
-            file.write(f"{website} | {email} | {password} \n")
+        with open("password.json" , "w") as file:
+            json.dump(new_data, file, indent=4)
             website_entry.delete(0, END)
             email_entry.delete(0, END)
             password_entry.delete(0, END)
